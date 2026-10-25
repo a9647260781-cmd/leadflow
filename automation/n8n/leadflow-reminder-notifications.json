@@ -1,0 +1,181 @@
+{
+  "id": "leadflow-reminder-notifications-v1",
+  "name": "LeadFlow — напоминания по заявкам",
+  "active": false,
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 1
+            }
+          ]
+        },
+        "misfirePolicy": "skip",
+        "misfireGraceSeconds": 0
+      },
+      "id": "d9effcf0-5892-4d76-a1ef-1f76e0774ba1",
+      "name": "Каждые 60 секунд",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://backend:8000/api/internal/notifications/dispatch",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "contentType": "json",
+        "specifyBody": "json",
+        "jsonBody": "{\"kind\":\"reminder\",\"limit\":1}",
+        "options": {
+          "timeout": 30000,
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "id": "e94a292b-8ec0-4eb9-8250-cfd499c9119e",
+      "name": "Запросить отправку напоминаний",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        260,
+        0
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "leadflow-backend-dispatch-auth",
+          "name": "LeadFlow Backend Dispatch Auth"
+        }
+      },
+      "notesInFlow": true,
+      "notes": "FastAPI выбирает просроченные напоминания, доставляет их в Telegram и хранит результат. n8n только запускает диспетчер. HTTP 401/503 и другие non-2xx останавливают execution с ошибкой."
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 4
+          },
+          "conditions": [
+            {
+              "id": "e23ca7cc-9153-463a-b08d-0fda2ec70456",
+              "leftValue": "={{ $json.claimed }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "7d60965c-bca6-42af-97fa-6685bd02d965",
+      "name": "Есть обработанные напоминания?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.4,
+      "position": [
+        520,
+        0
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "0379ba90-18c6-41ef-856d-25373e155a13",
+      "name": "Пакет напоминаний обработан",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        780,
+        -100
+      ],
+      "notesInFlow": true,
+      "notes": "Ответ FastAPI содержит только счётчики claimed/sent/retried/failed/delivery_unknown/skipped."
+    },
+    {
+      "parameters": {},
+      "id": "b82b1e10-fe74-4e0b-bff9-a0bdd82f2b1e",
+      "name": "Нет готовых напоминаний",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        780,
+        100
+      ],
+      "notesInFlow": true,
+      "notes": "Нормальный no-op: API вернул 200 и claimed = 0."
+    }
+  ],
+  "connections": {
+    "Каждые 60 секунд": {
+      "main": [
+        [
+          {
+            "node": "Запросить отправку напоминаний",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Запросить отправку напоминаний": {
+      "main": [
+        [
+          {
+            "node": "Есть обработанные напоминания?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Есть обработанные напоминания?": {
+      "main": [
+        [
+          {
+            "node": "Пакет напоминаний обработан",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Нет готовых напоминаний",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Europe/Moscow",
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "none",
+    "saveManualExecutions": false,
+    "saveExecutionProgress": false,
+    "executionTimeout": 45,
+    "callerPolicy": "none",
+    "redactionPolicy": "all",
+    "availableInMCP": false
+  },
+  "pinData": {},
+  "versionId": "51a972a5-43a7-4ce2-a383-926a98384a0f",
+  "tags": []
+}
