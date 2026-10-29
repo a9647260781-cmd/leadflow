@@ -86,3 +86,9 @@ Status: the user selected displayed option 1, «Сервисный бланк»,
 - `docs/DEMO_SCRIPT.md` defaults to the honest local/no-key branch. A hosted URL and live Yandex/Telegram remain optional; fixture output must never be presented as live. Notification wording promises bounded retries and explicit ambiguous-delivery handling, not exactly-once delivery.
 - Curated captures and provenance are in `docs/portfolio/README.md` and `docs/portfolio/images/`: desktop/mobile public form, demo-only manager list, seeded manual extraction, and the real mobile `not_configured` state. `public-desktop.jpg` is the agreed primary README hero. All captures use the real local UI/PostgreSQL, synthetic `Демо · ...` records, and contain no external integration output or secrets.
 - This portfolio packaging turn changed documentation and curated images only. It did not change UI/source, rerun tests/build, invoke the independent reviewer, connect external services, publish, commit, stage, or deploy.
+
+### Editorial refresh — 2026-10-30
+
+- `README.md` and `docs/PORTFOLIO_CASE.md` now explain the intended user, applicable small repair/service contexts, the operational problems LeadFlow addresses, and four concrete but explicitly illustrative workflows.
+- The copy was checked against current docs and source: free-text intake and idempotency, server status history, optional Yandex extraction with manual fallback, and the exact Telegram rule (initial alert plus one 30-minute reminder only after the initial alert and while the lead remains `new`; the first transition out of `new` cancels that reminder permanently).
+- The documentation explicitly avoids implying real clients, business effects, multi-manager assignment, live Yandex/Telegram use, or credential-free integrations. This was a documentation-only task; application code and tests were not changed or rerun.

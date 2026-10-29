@@ -9,6 +9,9 @@ actionable P0/P1/P2. Владелец впоследствии разрешил 
 
 Локальный portfolio package собран: repo-facing `README.md`, кейс `docs/PORTFOLIO_CASE.md`,
 demo script, пять curated screenshots с manifest, локальный setup и инструкция подготовки Git.
+30 октября 2026 года README и portfolio case дополнены описанием целевой аудитории, применимости и
+четырьмя иллюстративными сценариями; возможности и ограничения сверены с текущими docs/source.
+Это была только редактура документации: код и тестовый статус не менялись.
 `scripts\check-repository.ps1` прошёл для 131 Git-visible candidate files: обязательные portfolio-файлы,
 ignore rules, UTF-8/whitespace, локальные Markdown links/images и типовые credential signatures.
 По запросу reviewer backend suite свежо прошёл на отдельной disposable PostgreSQL-БД: `54 passed`;
